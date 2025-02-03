@@ -72,7 +72,7 @@ namespace AdventOfCode2020.Tools
             string sampleSolverFile = @$"..\..\..\Solver\DayXX.cs";
 
             // Read and fix
-            List<string> solverFile = File.ReadAllLines(sampleSolverFile).ToList();
+            List<string> solverFile = [.. File.ReadAllLines(sampleSolverFile)];
             for (int i = 0; i < solverFile.Count; i++)
             {
                 if (solverFile[i].Contains("DayXX"))

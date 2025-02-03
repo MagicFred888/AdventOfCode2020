@@ -9,7 +9,10 @@ internal static class Program
     [DllImport("user32.dll")]
     private static extern short GetAsyncKeyState(int vKey);
 
-    private static bool IsKeyPressed(int vKey) => (GetAsyncKeyState(vKey) & 0x8000) != 0;
+    private static bool IsKeyPressed(int vKey)
+    {
+        return (GetAsyncKeyState(vKey) & 0x8000) != 0;
+    }
 
     [STAThread]
     private static void Main()
