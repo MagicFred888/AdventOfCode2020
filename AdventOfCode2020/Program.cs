@@ -1,12 +1,25 @@
 ﻿using AdventOfCode2020.Solver;
+using AdventOfCode2020.Tools;
+using System.Runtime.InteropServices;
 
 namespace AdventOfCode2020;
 
 internal static class Program
 {
+    [DllImport("user32.dll")]
+    private static extern short GetAsyncKeyState(int vKey);
+
+    private static bool IsKeyPressed(int vKey) => (GetAsyncKeyState(vKey) & 0x8000) != 0;
+
     [STAThread]
     private static void Main()
     {
+        // Create next day data and solver?
+        if (IsKeyPressed(0x11) && IsKeyPressed(0x10) && DataAndClassGenerator.CreateLevel()) // VK_CONTROL && VK_SHIFT
+        {
+            return;
+        }
+
         // Check if we are still under development by checking if DayXX still exists
         string dayUnderDeveloppment = string.Empty;
 
@@ -23,6 +36,7 @@ internal static class Program
                 .Where(p => typeof(BaseSolver).IsAssignableFrom(p) && !p.IsAbstract && p.Name != "DayXX")
                 .OrderByDescending(p => p.Name)
                 .First();
+
             dayUnderDeveloppment = solverToLoad?.Name.Replace("Day", "") ?? "";
         }
 

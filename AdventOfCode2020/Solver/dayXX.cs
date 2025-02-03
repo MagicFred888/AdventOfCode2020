@@ -2,7 +2,7 @@
 
 internal partial class DayXX : BaseSolver
 {
-    public override string PuzzleTitle { get; } = "XXXXXXXXXXXXXXXXXX";
+    public override string PuzzleTitle { get; } = "XXX";
 
     public override string GetSolution1(bool isChallenge)
     {
