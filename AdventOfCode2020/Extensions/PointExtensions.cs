@@ -53,6 +53,27 @@ public static class PointExtensions
     }
 
     /// <summary>
+    /// Calculates the modulo of the point if modulo value is bigger than 0.
+    /// </summary>
+    /// <param name="point">The starting point.</param>
+    /// <param name="modulo">The modulo point.</param>
+    /// <returns>A new point with each coordinate modulo the corresponding coordinate of the modulo point.</returns>
+    public static Point Modulo(this Point point, Point modulo)
+    {
+        int newX = point.X;
+        if (modulo.X > 0)
+        {
+            newX = ((newX % modulo.X) + modulo.X) % modulo.X;
+        }
+        int newY = point.Y;
+        if (modulo.Y > 0)
+        {
+            newY = ((newY % modulo.Y) + modulo.Y) % modulo.Y;
+        }
+        return new(newX, newY);
+    }
+
+    /// <summary>
     /// Rotates the current point 90 degrees clockwise around the origin (0, 0).
     /// </summary>
     /// <param name="point">The point to rotate.</param>
