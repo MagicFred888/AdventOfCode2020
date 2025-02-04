@@ -17,7 +17,7 @@ public class QuickMatrix
 {
     private bool[,] _touchingSearch;
 
-    private readonly Dictionary<TouchingMode, List<Point>> _touchingMode = new()
+    public static readonly IReadOnlyDictionary<TouchingMode, List<Point>> Directions = new Dictionary<TouchingMode, List<Point>>()
     {
         { TouchingMode.Horizontal, new() { new Point(-1, 0), new Point(1, 0) } },
         { TouchingMode.Vertical, new() { new Point(0, -1), new Point(0, 1) } },
@@ -420,7 +420,7 @@ public class QuickMatrix
         _touchingSearch[position.X, position.Y] = true;
         List<CellInfo> result = [Cell(position)];
         string targetValue = result[0].StringVal;
-        foreach (Point move in _touchingMode[touchingMode])
+        foreach (Point move in Directions[touchingMode])
         {
             Point nextPosition = position.Add(move);
             if (Cell(nextPosition).IsValid && Cell(nextPosition).StringVal == targetValue)
@@ -458,7 +458,7 @@ public class QuickMatrix
     {
         // Get all neighbours
         List<CellInfo> result = [];
-        foreach (Point move in _touchingMode[touchingMode])
+        foreach (Point move in Directions[touchingMode])
         {
             Point nextPosition = cell.Position.Add(move);
             if (Cell(nextPosition).IsValid)
@@ -473,7 +473,7 @@ public class QuickMatrix
     {
         // Get all neighbours
         List<CellInfo> result = [];
-        foreach (Point move in _touchingMode[touchingMode])
+        foreach (Point move in Directions[touchingMode])
         {
             Point nextPosition = position.Add(move);
             if (Cell(nextPosition).IsValid)
