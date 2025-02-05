@@ -1,5 +1,5 @@
-﻿using AdventOfCode2020.Solver;
-using AdventOfCode2020.Tools;
+﻿using AdventOfCode2020.InternalTools;
+using AdventOfCode2020.Solver;
 using System.Runtime.InteropServices;
 
 namespace AdventOfCode2020;
@@ -18,17 +18,14 @@ internal static class Program
     private static void Main()
     {
         // Create next day data and solver?
-        if (IsKeyPressed(0x11) && IsKeyPressed(0x10) && DataAndClassGenerator.CreateLevel()) // VK_CONTROL && VK_SHIFT
+        bool fullySolved = false;
+        if (!fullySolved && IsKeyPressed(0x11) && IsKeyPressed(0x10) && DataAndClassGenerator.CreateLevel(2020)) // VK_CONTROL && VK_SHIFT
         {
             return;
         }
 
         // Check if we are still under development by checking if DayXX still exists
         string dayUnderDeveloppment = string.Empty;
-
-        bool fullySolved = !AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(s => s.GetTypes())
-            .Any(p => typeof(BaseSolver).IsAssignableFrom(p) && !p.IsAbstract && p.Name == "DayXX");
 
         // Pre-select day to latest with a solver
         if (!fullySolved)
