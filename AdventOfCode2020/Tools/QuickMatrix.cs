@@ -160,6 +160,16 @@ public class QuickMatrix
         ComputeOtherProperties();
     }
 
+    public QuickMatrix(List<CellInfo> data)
+    {
+        ColCount = data.Max(c => c.Position.X) + 1;
+        RowCount = data.Max(c => c.Position.Y) + 1;
+        _data = new CellInfo[ColCount, RowCount];
+        _touchingSearch = new bool[ColCount, RowCount];
+        data.ForEach(c => _data[c.Position.X, c.Position.Y] = c);
+        ComputeOtherProperties();
+    }
+
     public QuickMatrix Clone()
     {
         // Make a deep copy of everything
@@ -223,7 +233,7 @@ public class QuickMatrix
         {
             for (int y = 0; y < height; y++)
             {
-                rotated[y, width - 1 - x] = _data[x, y];
+                rotated[y, width - 1 - x] = new(y, width - 1 - x, _data[x, y]);
             }
         }
         _data = rotated;
@@ -244,7 +254,7 @@ public class QuickMatrix
         {
             for (int y = 0; y < height; y++)
             {
-                rotated[height - 1 - y, x] = _data[x, y];
+                rotated[height - 1 - y, x] = new(height - 1 - y, x, _data[x, y]);
             }
         }
         _data = rotated;
@@ -265,7 +275,7 @@ public class QuickMatrix
         {
             for (int y = 0; y < height; y++)
             {
-                rotated[width - 1 - x, height - 1 - y] = _data[x, y];
+                rotated[width - 1 - x, height - 1 - y] = new(width - 1 - x, height - 1 - y, _data[x, y]);
             }
         }
         _data = rotated;
@@ -283,7 +293,7 @@ public class QuickMatrix
         {
             for (int y = 0; y < height; y++)
             {
-                rotated[width - 1 - x, y] = _data[x, y];
+                rotated[width - 1 - x, y] = new(width - 1 - x, y, _data[x, y]);
             }
         }
         _data = rotated;
@@ -301,7 +311,7 @@ public class QuickMatrix
         {
             for (int y = 0; y < height; y++)
             {
-                rotated[x, height - 1 - y] = _data[x, y];
+                rotated[x, height - 1 - y] = new(x, height - 1 - y, _data[x, y]);
             }
         }
         _data = rotated;
@@ -319,7 +329,7 @@ public class QuickMatrix
         {
             for (int y = 0; y < height; y++)
             {
-                rotated[y, x] = _data[x, y];
+                rotated[y, x] = new(y, x, _data[x, y]);
             }
         }
         _data = rotated;
@@ -439,7 +449,7 @@ public class QuickMatrix
 
     public List<CellInfo> GetCellsInRange(Point startPos, Point endPos)
     {
-        List<CellInfo> result = new((endPos.X - startPos.X + 1) * (endPos.Y - startPos.Y + 1));
+        List<CellInfo> result = [];
         for (int x = startPos.X; x <= endPos.X; x++)
         {
             result.AddRange(Cols[x].GetRange(startPos.Y, endPos.Y - startPos.Y + 1));
@@ -449,9 +459,23 @@ public class QuickMatrix
 
     public QuickMatrix GetSubMatrix(Point startPos, Point endPos)
     {
-        QuickMatrix result = new(endPos.X - startPos.X + 1, endPos.Y - startPos.Y + 1);
-        GetCellsInRange(startPos, endPos).ForEach(c => result.Cell(c.Position.Subtract(startPos)).Set(c));
-        return result;
+        List<CellInfo> allCells = [];
+        foreach (CellInfo cell in GetCellsInRange(startPos, endPos))
+        {
+            Point targetPos = cell.Position.Subtract(startPos);
+            allCells.Add(new CellInfo(targetPos, cell));
+        }
+        return new(allCells);
+    }
+
+    public void SetSubMatrix(Point point, QuickMatrix newData)
+    {
+        foreach (CellInfo cell in newData.Cells)
+        {
+            Point targetPos = point.Add(cell.Position);
+            _data[targetPos.X, targetPos.Y] = new CellInfo(targetPos, cell);
+        }
+        ComputeOtherProperties();
     }
 
     public List<CellInfo> GetNeighbours(CellInfo cell, TouchingMode touchingMode = TouchingMode.All)

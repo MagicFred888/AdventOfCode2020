@@ -46,6 +46,15 @@ public class CellInfo
         BoolVal = boolVal;
     }
 
+    public CellInfo(int x, int y, CellInfo cellInfo) : this(new Point(x, y), cellInfo)
+    { }
+
+    public CellInfo(Point position, CellInfo cellInfo)
+    {
+        Position = position;
+        Set(cellInfo);
+    }
+
     public string ToString(CellInfoContentType contentType)
     {
         return contentType switch
