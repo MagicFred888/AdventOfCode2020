@@ -18,25 +18,71 @@ public sealed class ChainedNode
 
     public void InsertBefore(ChainedNode newNode)
     {
-        newNode.Previous = Previous;
-        Previous.Next = newNode;
-        Previous = newNode;
-        newNode.Next = this;
+        ChainedNode insertStartNode = newNode;
+        ChainedNode insertEndNode = newNode.Previous;
+
+        insertStartNode.Previous = Previous;
+        Previous.Next = insertStartNode;
+
+        Previous = insertEndNode;
+        insertEndNode.Next = this;
     }
 
     public void InsertAfter(ChainedNode newNode)
     {
-        newNode.Next = Next;
-        Next.Previous = newNode;
-        Next = newNode;
-        newNode.Previous = this;
+        ChainedNode insertStartNode = newNode;
+        ChainedNode insertEndNode = newNode.Previous;
+
+        insertEndNode.Next = Next;
+        Next.Previous = insertEndNode;
+
+        Next = insertStartNode;
+        insertStartNode.Previous = this;
     }
 
-    public void RemovePreviousNode()
+    public ChainedNode RemovePreviousNode(int nbrToRemove = 1)
     {
-        ChainedNode marble = Previous;
-        Previous = marble.Previous;
-        marble.Previous.Next = this;
+        ChainedNode lastNodeToRemove = Previous;
+        ChainedNode firstNodeToRemove = this.MoveBackward(nbrToRemove);
+
+        // Remove section
+        Previous = firstNodeToRemove.Previous;
+        firstNodeToRemove.Previous.Next = this;
+
+        // Close removed section
+        firstNodeToRemove.Previous = lastNodeToRemove;
+        lastNodeToRemove.Next = firstNodeToRemove;
+
+        // Return start point of removed sequence
+        return firstNodeToRemove;
+    }
+
+    public ChainedNode RemoveNextNode(int nbrToRemove = 1)
+    {
+        ChainedNode firstNodeToRemove = Next;
+        ChainedNode lastNodeToRemove = this.MoveForward(nbrToRemove);
+
+        // Remove section
+        Next = lastNodeToRemove.Next;
+        lastNodeToRemove.Next.Previous = this;
+
+        // Close removed section
+        firstNodeToRemove.Previous = lastNodeToRemove;
+        lastNodeToRemove.Next = firstNodeToRemove;
+
+        // Return start point of removed sequence
+        return firstNodeToRemove;
+    }
+
+    public bool ChainContain(int nodeValue)
+    {
+        ChainedNode searchNode = this;
+        do
+        {
+            if (searchNode.Value == nodeValue) return true;
+            searchNode = searchNode.Next;
+        } while (searchNode != this);
+        return false;
     }
 
     public ChainedNode MoveForward(int nbrOfStep)
@@ -47,6 +93,11 @@ public sealed class ChainedNode
     public ChainedNode MoveBackward(int nbrOfStep)
     {
         return nbrOfStep == 0 ? this : Previous.MoveBackward(nbrOfStep - 1);
+    }
+
+    public override string ToString()
+    {
+        return $"{Previous.Value} <- ({Value}) -> {Next.Value}";
     }
 
     public void DebugPrint(ChainedNode? highlight1, ChainedNode? highlight2 = null, ChainedNode? highlight3 = null)
