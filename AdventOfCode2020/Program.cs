@@ -18,7 +18,7 @@ internal static class Program
     private static void Main()
     {
         // Create next day data and solver?
-        bool fullySolved = false;
+        bool fullySolved = true;
         if (!fullySolved && IsKeyPressed(0x11) && IsKeyPressed(0x10) && DataAndClassGenerator.CreateLevel(2020)) // VK_CONTROL && VK_SHIFT
         {
             return;
